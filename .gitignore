@@ -7,5 +7,5 @@ utils/cloud-processing/matlab_specific/
 utils/cloud-processing/pointclouds/
 utils/cloud-processing/ready_clouds/
 utils/cloud-processing/results/
-utils/cloud-processing/info/images/
+utils/cloud-processing/info/
 app/lib/assets/

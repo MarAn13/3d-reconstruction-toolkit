@@ -73,3 +73,8 @@ $ python -m pip install -e .
 3. Select reconstruction options.
 4. Open history page.
 5. Enjoy!
+
+### Reconstruction examples
+---
+
+Some resulting 3d models and its statistics available via [google drive](https://drive.google.com/drive/folders/1Vy9uAt-D2ExVvkSIfCxMZ6wcsmNMxQvD?usp=sharing).
