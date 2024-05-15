@@ -1,0 +1,11 @@
+vocab_tree_flickr100K_words32K.bin
+runs/
+test.sh
+pipeline_test.sh
+utils/model-assets/
+utils/cloud-processing/matlab_specific/
+utils/cloud-processing/pointclouds/
+utils/cloud-processing/ready_clouds/
+utils/cloud-processing/results/
+utils/cloud-processing/info/images/
+app/lib/assets/

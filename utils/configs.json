@@ -1,0 +1,148 @@
+{
+    "COLMAP": {
+        "random_seed": 42,
+        "vocab_tree_path": "vocab_tree_flickr100K_words32K.bin",
+        "video": {
+            "Mapper": {
+                "init_min_tri_angle": "default ['Mapper']['init_min_tri_angle'] // 2",
+                "ba_global_images_ratio": 1.4,
+                "ba_global_points_ratio": 1.4,
+                "min_focal_length_ratio": 0.1,
+                "max_focal_length_ratio": 10,
+                "max_extra_param": 1.79769e+308
+            }
+        },
+        "low": {
+            "SiftExtraction": {
+                "max_image_size": 1000,
+                "max_num_features": 2048
+            },
+            "SequentialMatching": {
+                "loop_detection_num_images": "['SequentialMatching']['loop_detection_num_images'] // 2"
+            },
+            "Mapper": {
+                "ba_local_max_num_iterations": "['Mapper']['ba_local_max_num_iterations'] // 2",
+                "ba_global_max_num_iterations": "['Mapper']['ba_global_max_num_iterations']) // 2",
+                "ba_global_images_ratio": "'Mapper']['ba_global_images_ratio']) * 1.2",
+                "ba_global_points_ratio": "'Mapper']['ba_global_points_ratio']) * 1.2",
+                "ba_global_max_refinements": 2
+            }
+        },
+        "mid": {
+            "SiftExtraction": {
+                "max_image_size": 1600,
+                "max_num_features": 4096
+            },
+            "SequentialMatching": {
+                "loop_detection_num_images": "['SequentialMatching']['loop_detection_num_images'] // 1.5"
+            },
+            "Mapper": {
+                "ba_local_max_num_iterations": "['Mapper']['ba_local_max_num_iterations'] // 1.5",
+                "ba_global_max_num_iterations": "['Mapper']['ba_global_max_num_iterations']) // 1.5",
+                "ba_global_images_ratio": "'Mapper']['ba_global_images_ratio']) * 1.1",
+                "ba_global_points_ratio": "'Mapper']['ba_global_points_ratio']) * 1.1",
+                "ba_global_max_refinements": 2
+            }
+        },
+        "high": {
+            "SiftExtraction": {
+                "estimate_affine_shape": true,
+                "domain_size_pooling": true,
+                "guided_matching": true,
+                "ba_local_max_num_iterations": 40,
+                "ba_local_max_refinements": 3,
+                "ba_global_max_num_iterations": 100
+            }
+        }
+    },
+    "OpenMVS": {
+        "low": {
+            "densify": {
+                "resolution-level": 2,
+                "max-resolution": 512,
+                "sub-resolution-levels": 0,
+                "number-views": 6
+            },
+            "reconstruct": {
+                "min-point-distance": 6
+            },
+            "refine": {
+                "resolution-level": 2,
+                "max-views": 6,
+                "scales": 2
+            },
+            "texture": {
+                "resolution-level": 2
+            }
+        },
+        "mid": {
+            "densify": {
+                "resolution-level": 1,
+                "max-resolution": 1024,
+                "sub-resolution-levels": 1,
+                "number-views": 8
+            },
+            "reconstruct": {
+                "min-point-distance": 4
+            },
+            "refine": {
+                "resolution-level": 1,
+                "max-views": 8,
+                "scales": 2
+            },
+            "texture": {
+                "resolution-level": 1
+            }
+        },
+        "high": {
+            "densify": {
+                "resolution-level": 0,
+                "max-resolution": 2560,
+                "sub-resolution-levels": 2,
+                "number-views": 10
+            },
+            "reconstruct": {
+                "min-point-distance": 2.5
+            },
+            "refine": {
+                "resolution-level": 0,
+                "max-views": 10,
+                "scales": 2
+            },
+            "texture": {
+                "resolution-level": 0
+            }
+        }
+    },
+    "ALIKED": {
+        "low": {
+            "max_num_keypoints": 2048
+        },
+        "mid": {
+            "max_num_keypoints": 4096
+        },
+        "high": {
+            "max_num_keypoints": 8192
+        }
+    },
+    "LightGlue": {
+        "low": {
+            "mp": true,
+            "depth_confidence": 0.9,
+            "width_confidence": 0.95,
+            "n_layers": 5
+        },
+        "mid": {
+            "mp": false,
+            "depth_confidence": 0.95,
+            "width_confidence": 0.99,
+            "n_layers": 7
+        },
+        "high": {
+            "mp": false,
+            "depth_confidence": -1,
+            "width_confidence": -1,
+            "n_layers": 9
+        }
+    }
+}
