@@ -45,6 +45,8 @@ colmap_dir="<PATH TO COLMAP BINARY>"
 openmvs_dir="<PATH TO OPENMVS BINARY>"
 ```
 
+Place `vocab_tree_file` in the root of the project (cloned repository).
+
 #### Dependencies
 ---
 
@@ -53,6 +55,8 @@ openmvs_dir="<PATH TO OPENMVS BINARY>"
 - [LightGlue](https://github.com/cvg/LightGlue)
 
 Download COLMAP and OpenMVS binaries.
+
+Download [vocab_tree_file](https://demuc.de/colmap/).
 
 Clone and install LightGlue
 
