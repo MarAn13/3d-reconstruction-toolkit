@@ -18,7 +18,9 @@ fi
 colmap_dir="<PATH TO COLMAP BINARY>"
 openmvs_dir="<PATH TO OPENMVS BINARY>"
 
-mkdir "runs/$run_dir"
-path_to_workspace="$PWD/$run_dir"
+# workspace should be created from app ssh access
+path_to_workspace="$PWD/runs/$run_dir"
+# run data processing
+python run_data_processing.py "$path_to_workspace"
 # run SfM - MVS pipeline
 ./run_video_final_ini.sh -c "$colmap_dir" -o "$openmvs_dir" -d "$path_to_workspace"
