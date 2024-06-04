@@ -1,5 +1,9 @@
 vocab_tree_flickr100K_words32K.bin
 runs/
+runs-save/
+runs-data/videos/*.mp4
+runs-data/options/*.json
+**/__pycache__/
 pipeline_test.sh
 utils/model-assets/
 utils/cloud-processing/matlab_specific/
@@ -9,6 +13,5 @@ utils/cloud-processing/results/
 utils/cloud-processing/info/
 utils/object-detection/*
 !utils/object-detection/detect_object.ipynb
-utils/pipeline/__pycache__
 utils/pipeline/yolov8s-seg-co3d.pt
 app/lib/assets/

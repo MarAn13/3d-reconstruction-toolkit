@@ -34,7 +34,9 @@ class ReconstructionParameters {
 
   Future<void> writeToJsonFile(String pathToFile) async {
     File file = File(pathToFile);
-    await file.writeAsString(jsonEncode(toJson()));
+    final spaces = ' ' * 4;
+    final encoder = JsonEncoder.withIndent(spaces);
+    await file.writeAsString(encoder.convert(toJson()));
   }
 }
 

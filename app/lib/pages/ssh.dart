@@ -10,20 +10,20 @@ enum AuthMode { password, key }
 
 class SSHDriver {
   SecureStorageDriver secureStorageDriver = SecureStorageDriver();
-  late Future<SSHClient> client;
   SSHDriver();
 
   Future<SSHClient> connect() async {
     SecureStorageData storageData =
         await secureStorageDriver.storageRetrieveAll();
+    late SSHClient client;
     if (!storageData.useKey) {
-      final client = SSHClient(
+      client = SSHClient(
         await SSHSocket.connect(storageData.remoteAddress, 22),
         username: storageData.remoteUser,
         onPasswordRequest: () => storageData.remotePassword,
       );
     } else {
-      final client = SSHClient(
+      client = SSHClient(
         await SSHSocket.connect(storageData.remoteAddress, 22),
         username: storageData.remoteUser,
         identities: [
@@ -36,20 +36,22 @@ class SSHDriver {
     return client;
   }
 
-  Future<bool> runRemotePipeline(final SSHClient sshClient) async {
+  Future<bool> runRemotePipeline(final String commandsStr) async {
+    SSHClient sshClient = await connect();
     print("CLIENT CONNECTED");
-    final pwd = await sshClient.run(
-        'cd "C:/Users/marem/dev/projects/unn/cw/current_year_run/final" && bash ./test.sh');
+    final pwd = await sshClient.run(commandsStr);
     print(utf8.decode(pwd));
     print("REMOTE PIPELINE DONE");
+    sshClient.close();
     return true;
   }
 
-  Future<String> downloadRemoteFile(final SSHClient sshClient) async {
+  Future<String> downloadRemoteFile(final String remoteModelFilePath) async {
+    SSHClient sshClient = await connect();
     print("CLIENT CONNECTED");
     final sftp = await sshClient.sftp();
     final remoteFile = await sftp.open(
-      "C:/Users/marem/dev/projects/unn/cw/current_year_run/final/runs/teddybear/project/mvs/model_final.glb",
+      remoteModelFilePath,
       mode: SftpFileOpenMode.read,
     );
     final data = await remoteFile.readBytes();
@@ -64,26 +66,52 @@ class SSHDriver {
     }
     print('FILE DOWNLOADED');
     sftp.close();
+    sshClient.close();
     return localFilePath;
   }
 
   Future<void> uploadLocalFile(
-      final SSHClient sshClient, final String localFilePath, final String remoteFilePath) async {
+      final String localFilePath, final String remoteFilePath) async {
+    SSHClient sshClient = await connect();
     final sftp = await sshClient.sftp();
     final file = await sftp.open(remoteFilePath,
         mode: SftpFileOpenMode.create | SftpFileOpenMode.write);
     await file.write(File(localFilePath).openRead().cast());
     sftp.close();
+    sshClient.close();
   }
 
-  Future<String> runPipeline(final String localVideoFilePath, final String pathToOptionsJson) async {
-    SSHClient sshClient = await connect();
-    //await uploadLocalFile(sshClient, localVideoFilePath, "C:/Users/marem/dev/projects/unn/cw/current_year_run/final/runs/teddybear/video.mp4");
-    //await uploadLocalFile(sshClient, pathToOptionsJson, "C:/Users/marem/dev/projects/unn/cw/current_year_run/final/runs/teddybear/reconstruction-options.json");
-    //await runRemotePipeline(sshClient);
-    String modelFilePath = await downloadRemoteFile(sshClient);
-    print(localVideoFilePath);
-    sshClient.close();
+  Future<String> runPipeline(final String runDirName,
+      final String localVideoFilePath, final String pathToOptionsJson) async {
+    SecureStorageDriver secureStorageDriver = SecureStorageDriver();
+    SecureStorageData storageData =
+        await secureStorageDriver.storageRetrieveAll();
+    List<String> commands = storageData.remoteCommands.split('&&');
+    String remoteRepoDirPath = commands[0].trim();
+    remoteRepoDirPath = remoteRepoDirPath.replaceAll(RegExp(r'["]+'),'');
+    commands = commands.sublist(1, commands.length);
+    commands = [
+      'cd "$remoteRepoDirPath"',
+      ...commands,
+      'bash ./app_pipeline.sh -d "$runDirName"'
+    ];
+    final String commandsStr = commands.join(' && ');
+    print(remoteRepoDirPath);
+    print(commandsStr);
+    final String remoteVideosDirPath = "$remoteRepoDirPath/runs-data/videos";
+    final String remoteVideoFileName = "video-$runDirName.mp4";
+    final String remoteVideoFilePath =
+        "$remoteVideosDirPath/$remoteVideoFileName";
+    await uploadLocalFile(localVideoFilePath, remoteVideoFilePath);
+    final String remoteOptionsDirPath = "$remoteRepoDirPath/runs-data/options";
+    final String remoteOptionsFileName = "options-$runDirName.json";
+    final String remoteOptionsFilePath =
+        "$remoteOptionsDirPath/$remoteOptionsFileName";
+    await uploadLocalFile(pathToOptionsJson, remoteOptionsFilePath);
+    await runRemotePipeline(commandsStr);
+    final String remoteModelFilePath = "$remoteRepoDirPath/runs/$runDirName/project/mvs/model_final.glb";
+    String modelFilePath = await downloadRemoteFile(remoteModelFilePath);
+    print(modelFilePath);
     return modelFilePath;
   }
 }

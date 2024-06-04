@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# run as:  ./run_video_final_ini.sh -c "C:/Users/marem/dev/projects/unn/cw/COLMAP-3.9.1-windows-cuda/COLMAP.bat" -o "C:/Users/marem/dev/projects/unn/cw/OpenMVS-2.3.0-windows" -d <directory> >> "run_log.log"
+# run as:  ./run_sfm_mvs.sh -c <PATH TO COLMAP BINARY> -o <PATH TO OpenMVS FOLDER> -d <directory>
 
 # pass params: 
 #   ($1) deep_run (0 or 1)
@@ -260,7 +260,17 @@ if [ -d "$workspace_dir" ]; then
     echo "      Elapsed SfM Time: $runtime_sfm seconds" >> "$file_log_time"
     echo "      Elapsed MVS Time: $runtime_mvs seconds" >> "$file_log_time"
     echo "      Elapsed Total Time: $runtime_all seconds" >> "$file_log_time"
-    #rm -rf "$project_name/dense/images"
+    # convert resulting model (include texture)
+    path_to_model="$workspace_dir/$project_name/mvs/model_dense.ply"
+    path_to_converted_model="$workspace_dir/$project_name/mvs/model_final.glb"
+    mode="pointcloud"
+    if [ "$mvs_make_mesh" -eq 1 ]
+    then
+        path_to_model="$workspace_dir/$project_name/mvs/model.glb"
+        mode="mesh"
+    fi
+    echo -e "$YELLOW CONVERTING MODEL.."
+    python $workspace_dir/../../utils/model-convert/model_convert_driver.py "$path_to_model" "$path_to_converted_model" "$mode"
 else
     echo -e "$RED directory $workspace_dir doesn't exist" && exit 1
 fi

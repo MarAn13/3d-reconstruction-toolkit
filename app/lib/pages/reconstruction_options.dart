@@ -29,7 +29,7 @@ enum ComputingUnit { cpu, gpu }
 
 enum ReconstructionRepresentation { pointcloud, mesh }
 
-enum ProcessStatus { waiting, processing, done }
+enum ProcessStatus { waiting, processing, error, done }
 
 class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
   ReconstructionMethod selectedReconstructionMethod =
@@ -64,7 +64,7 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
       });
       // init variables
       final nowUtc = DateTime.now().toUtc();
-      final String runDirName=
+      final String runDirName =
           'run-${nowUtc.year}-${nowUtc.month}-${nowUtc.day}-${nowUtc.hour}-${nowUtc.minute}-${nowUtc.second}-${nowUtc.millisecond}';
       final String reconstructionMethod = selectedReconstructionMethod.name;
       final String reconstructionQuality = selectedReconstructionQuality.name;
@@ -82,13 +82,32 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
           computingUnit,
           reconstructionRepresentation);
       Directory tempDir = await getTemporaryDirectory();
-      final String pathToOptionsJson = '${tempDir.path}/reconstruction-options.json';
+      final String pathToOptionsJson =
+          '${tempDir.path}/reconstruction-options.json';
       await reconstructionOptions.writeToJsonFile(pathToOptionsJson);
       // get remotely reconstructed and saved locally model path
       final String localVideoFilePath = widget.filePath;
-      final String modelFilePath = await SSHDriver()
-          .runPipeline(localVideoFilePath, pathToOptionsJson);
-      print('RECEIVED MODEL PATH: ${modelFilePath}');
+      String modelFilePath;
+      try {
+        modelFilePath = await SSHDriver()
+            .runPipeline(runDirName, localVideoFilePath, pathToOptionsJson);
+      } catch (e) {
+        print(e);
+        tempDir.deleteSync(recursive: true);
+        tempDir.create();
+        setState(() {
+          _processStatus = ProcessStatus.error;
+        });
+        Future.delayed(const Duration(seconds: 2)).then((val) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MainApp(initPageIndex: 1)),
+          (Route<dynamic> route) => false,
+        );
+      });
+        return false;
+      }
+      print('RECEIVED MODEL PATH: $modelFilePath');
       // insert into the database
       RunInfo newRunInfo = RunInfo(
           "pathToThumbnail",
@@ -303,6 +322,8 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
           ]);
     } else if (_processStatus == ProcessStatus.processing) {
       dynamicWidget = CircularProgressIndicator();
+    }else if (_processStatus == ProcessStatus.error){
+      dynamicWidget = Icon(Icons.close, color: Colors.red);
     } else {
       dynamicWidget = Icon(Icons.check, color: Colors.green);
     }
@@ -326,7 +347,9 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
           onTap: _navigateBottomBar,
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.folder), label: "history"),
-            BottomNavigationBarItem(icon: Icon(Icons.radio_button_checked), label: "reconstruction"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.radio_button_checked),
+                label: "reconstruction"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: "settings")
           ],
