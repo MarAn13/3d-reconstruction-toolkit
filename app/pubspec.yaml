@@ -35,3 +35,4 @@ flutter:
     - lib/assets/orange_asset.jpg
     - lib/assets/teddybear_asset.glb
     - lib/assets/teddybear_asset.jpg
+    - lib/assets/sample_model.jpg

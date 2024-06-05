@@ -41,24 +41,30 @@ class ModelCard extends StatelessWidget {
     return File(tempFilePath);
   }
 
-  Future<File> getImageFile() async {
-    final filePath = join(
-        (await getApplicationDocumentsDirectory()).path, "model_poster.png");
-    return File(filePath);
+  Future<File> getPosterFile(final String posterPath) async {
+    File posterFile;
+    if (!await File(posterPath).exists()) {
+      posterFile = await getImageFileFromAsset();
+    } else {
+      posterFile = File(posterPath);
+    }
+    return posterFile;
   }
 
-  
-Future<File> getImageFileFromAsset(String assetPath) async {
-  final ByteData data = await rootBundle.load(assetPath);
-  final List<int> bytes = data.buffer.asUint8List();
-  final fileName = assetPath.split("/").last;
-  final tempDir = await getTemporaryDirectory();
-  final tempFile = File('${tempDir.path}/$fileName');
-
-  await tempFile.writeAsBytes(bytes);
-  
-  return tempFile;
-}
+  // get sample model preview (asset)
+  Future<File> getImageFileFromAsset() async {
+    final String assetPath = "lib/assets/sample_model.jpg";
+    final fileName = assetPath.split("/").last;
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File('${tempDir.path}/$fileName');
+    if (await tempFile.exists()) {
+      return tempFile;
+    }
+    final ByteData data = await rootBundle.load(assetPath);
+    final List<int> bytes = data.buffer.asUint8List();
+    await tempFile.writeAsBytes(bytes);
+    return tempFile;
+  }
 
   void _shareModel() async {
     String text =
@@ -74,7 +80,7 @@ Future<File> getImageFileFromAsset(String assetPath) async {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         FutureBuilder<File>(
-            future: getImageFileFromAsset(modelInfo.pathToThumbnail),
+            future: getPosterFile(modelInfo.pathToThumbnail),
             builder: (BuildContext context, AsyncSnapshot<File> snapshot) {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
@@ -84,9 +90,9 @@ Future<File> getImageFileFromAsset(String assetPath) async {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ModelViewPage(
-                              pathToModel: modelInfo.pathToModel)),
-                    );
+                          builder: (context) =>
+                              ModelViewPage(runInfo: modelInfo)),
+                    ).then((value) => resetPageSignal());
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width,
@@ -99,10 +105,20 @@ Future<File> getImageFileFromAsset(String assetPath) async {
                   ),
                 );
               } else if (snapshot.hasError) {
-                return Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height / 5,
-                    child: Text('Error loading image'));
+                return GestureDetector(
+                    onTap: () {
+                      print('MODELCARD:${modelInfo.pathToModel}');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ModelViewPage(runInfo: modelInfo)),
+                      ).then((value) => resetPageSignal());
+                    },
+                    child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 5,
+                        child: Text('Error loading image')));
               } else {
                 return Container(
                     width: MediaQuery.of(context).size.width,

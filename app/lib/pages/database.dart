@@ -41,9 +41,9 @@ class ReconstructionParameters {
 }
 
 class RunInfo {
-  int? id;
+  late int id;
   final DateTime dateTime;
-  final String pathToThumbnail;
+  String pathToThumbnail;
   final String pathToModel;
   final String reconstructionMethod;
   final String reconstructionQuality;
@@ -128,6 +128,12 @@ class DatabaseDriver {
       runInfo.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+  }
+
+  Future<void> update(RunInfo runInfo) async {
+    final db = await database;
+    await db.update(databaseName, runInfo.toMap(),
+        where: 'id = ?', whereArgs: [runInfo.id]);
   }
 
   Future<List<RunInfo>> getAll() async {

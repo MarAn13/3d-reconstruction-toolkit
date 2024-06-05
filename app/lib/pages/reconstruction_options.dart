@@ -110,7 +110,7 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
       print('RECEIVED MODEL PATH: $modelFilePath');
       // insert into the database
       RunInfo newRunInfo = RunInfo(
-          "pathToThumbnail",
+          "",
           nowUtc,
           modelFilePath,
           reconstructionMethod,
