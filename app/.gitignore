@@ -41,3 +41,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# User specific
+lib/assets/*
+!lib/assets/sample_model.jpg
