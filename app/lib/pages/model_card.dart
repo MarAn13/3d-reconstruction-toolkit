@@ -1,12 +1,9 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as img;
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:reconstruction_3d/pages/database.dart';
 import 'package:reconstruction_3d/pages/model_viewer.dart';
@@ -86,7 +83,7 @@ class ModelCard extends StatelessWidget {
                   snapshot.hasData) {
                 return GestureDetector(
                   onTap: () {
-                    print('MODELCARD:${modelInfo.pathToModel}');
+                    debugPrint('MODELCARD:${modelInfo.pathToModel}');
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -107,7 +104,7 @@ class ModelCard extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return GestureDetector(
                     onTap: () {
-                      print('MODELCARD:${modelInfo.pathToModel}');
+                      debugPrint('MODELCARD:${modelInfo.pathToModel}');
                       Navigator.push(
                         context,
                         MaterialPageRoute(

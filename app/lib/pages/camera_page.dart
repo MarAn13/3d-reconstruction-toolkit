@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:reconstruction_3d/main.dart';
-import 'package:reconstruction_3d/pages/home_page.dart';
 import 'package:reconstruction_3d/pages/video_page.dart';
 
 class CameraPage extends StatefulWidget {

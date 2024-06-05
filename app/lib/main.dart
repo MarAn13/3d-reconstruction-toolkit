@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart';
-import 'package:reconstruction_3d/pages/database.dart';
 import 'package:reconstruction_3d/pages/history_page.dart';
 import 'package:reconstruction_3d/pages/home_page.dart';
 import 'package:reconstruction_3d/pages/settings_page.dart';

@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera: ^0.10.5+9
+  camera: ^0.11.0+1
   video_player: ^2.8.6 
   image: ^4.1.7
   sqflite: ^2.3.3+1
@@ -24,15 +24,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
   assets:
-    - lib/assets/bowl_asset.glb
-    - lib/assets/bowl_asset.jpg
-    - lib/assets/orange_asset.glb
-    - lib/assets/orange_asset.jpg
-    - lib/assets/teddybear_asset.glb
-    - lib/assets/teddybear_asset.jpg
     - lib/assets/sample_model.jpg

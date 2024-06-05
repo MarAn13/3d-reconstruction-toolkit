@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:reconstruction_3d/pages/database.dart';
 import 'package:reconstruction_3d/pages/storage.dart';
 
 enum AuthMode { password, key }
@@ -38,17 +38,17 @@ class SSHDriver {
 
   Future<bool> runRemotePipeline(final String commandsStr) async {
     SSHClient sshClient = await connect();
-    print("CLIENT CONNECTED");
+    debugPrint("CLIENT CONNECTED");
     final pwd = await sshClient.run(commandsStr);
-    print(utf8.decode(pwd));
-    print("REMOTE PIPELINE DONE");
+    debugPrint(utf8.decode(pwd));
+    debugPrint("REMOTE PIPELINE DONE");
     sshClient.close();
     return true;
   }
 
   Future<String> downloadRemoteFile(final String remoteModelFilePath) async {
     SSHClient sshClient = await connect();
-    print("CLIENT CONNECTED");
+    debugPrint("CLIENT CONNECTED");
     final sftp = await sshClient.sftp();
     final remoteFile = await sftp.open(
       remoteModelFilePath,
@@ -58,13 +58,13 @@ class SSHDriver {
     final localDirPath = (await getApplicationDocumentsDirectory()).path;
     final localFilePath = '${localDirPath}/model_final.glb';
     final localFile = File(localFilePath);
-    print(localFilePath);
+    debugPrint(localFilePath);
     try {
       await localFile.writeAsBytes(data);
-    } catch (e) {
-      print(e);
+    } catch (error) {
+      debugPrint(error.toString());
     }
-    print('FILE DOWNLOADED');
+    debugPrint('FILE DOWNLOADED');
     sftp.close();
     sshClient.close();
     return localFilePath;
@@ -96,8 +96,8 @@ class SSHDriver {
       'bash ./app_pipeline.sh -d "$runDirName"'
     ];
     final String commandsStr = commands.join(' && ');
-    print(remoteRepoDirPath);
-    print(commandsStr);
+    debugPrint(remoteRepoDirPath);
+    debugPrint(commandsStr);
     final String remoteVideosDirPath = "$remoteRepoDirPath/runs-data/videos";
     final String remoteVideoFileName = "video-$runDirName.mp4";
     final String remoteVideoFilePath =
@@ -111,7 +111,7 @@ class SSHDriver {
     await runRemotePipeline(commandsStr);
     final String remoteModelFilePath = "$remoteRepoDirPath/runs/$runDirName/project/mvs/model_final.glb";
     String modelFilePath = await downloadRemoteFile(remoteModelFilePath);
-    print(modelFilePath);
+    debugPrint(modelFilePath);
     return modelFilePath;
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
@@ -24,18 +23,18 @@ class ModelViewPage extends StatelessWidget {
       DatabaseDriver databaseDriver = DatabaseDriver();
       await databaseDriver.init();
       await databaseDriver.update(runInfo);
-      print('NEW THUMBNAIL: $newPathToThumbnail');
+      debugPrint('NEW THUMBNAIL: $newPathToThumbnail');
     }).catchError((error) {
-      print('ERROR CAPTURE: $error');
+      debugPrint('ERROR CAPTURE: $error');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print('THUMBNAIL: ${runInfo.pathToThumbnail}');
+    debugPrint('THUMBNAIL: ${runInfo.pathToThumbnail}');
     ModelViewer modelViewer = ModelViewer(
       backgroundColor: Color.fromARGB(0xFF, 0xEE, 0xEE, 0xEE),
-      src: '${runInfo.pathToModel}', //'file://$pathToModel',
+      src: 'file://${runInfo.pathToModel}',
       alt: 'A 3D model',
       ar: true,
       autoRotate: true,
@@ -48,14 +47,14 @@ class ModelViewPage extends StatelessWidget {
       body: () {
         final bool previewReady = File(runInfo.pathToThumbnail).existsSync();
         if (previewReady) {
-          print("NO CAPTURE");
+          debugPrint("NO CAPTURE");
           return modelViewer;
         }
-        print("CAPTURE");
+        debugPrint("CAPTURE");
         ScreenshotController screenshotController = ScreenshotController();
         Screenshot modelScreenshot =
             Screenshot(controller: screenshotController, child: modelViewer);
-        Future.delayed(const Duration(seconds: 3)).then((val) {
+        Future.delayed(const Duration(seconds: 5)).then((val) {
           _takeScreenshot(screenshotController);
         });
         return modelScreenshot;

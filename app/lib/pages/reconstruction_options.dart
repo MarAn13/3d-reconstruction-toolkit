@@ -1,10 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:reconstruction_3d/main.dart';
-import 'package:reconstruction_3d/pages/camera_page.dart';
 import 'package:reconstruction_3d/pages/database.dart';
 import 'package:reconstruction_3d/pages/ssh.dart';
 
@@ -91,8 +89,8 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
       try {
         modelFilePath = await SSHDriver()
             .runPipeline(runDirName, localVideoFilePath, pathToOptionsJson);
-      } catch (e) {
-        print(e);
+      } catch (error) {
+        debugPrint(error.toString());
         tempDir.deleteSync(recursive: true);
         tempDir.create();
         setState(() {
@@ -107,7 +105,7 @@ class _ReconstructionOptionsPageState extends State<ReconstructionOptionsPage> {
       });
         return false;
       }
-      print('RECEIVED MODEL PATH: $modelFilePath');
+      debugPrint('RECEIVED MODEL PATH: $modelFilePath');
       // insert into the database
       RunInfo newRunInfo = RunInfo(
           "",
