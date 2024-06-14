@@ -15,10 +15,8 @@ then
       exit 1
 fi
 # init vars
-#colmap_dir="<PATH TO COLMAP BINARY>"
-#openmvs_dir="<PATH TO OPENMVS FOLDER>"
-colmap_dir="C:\Users\marem\dev\projects\unn\cw\COLMAP-3.9.1-windows-cuda\COLMAP.bat"
-openmvs_dir="C:\Users\marem\dev\projects\unn\cw\OpenMVS-2.3.0-windows"
+colmap_dir="<PATH TO COLMAP BINARY>"
+openmvs_dir="<PATH TO OPENMVS FOLDER>"
 
 mkdir "runs/$run_dir_name"
 # run data processing

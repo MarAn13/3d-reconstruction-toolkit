@@ -64,7 +64,7 @@ def mask_driver(path_to_images, path_to_masks, classes, device, save):
     path_to_cur_dir = os.path.dirname(os.path.realpath(__file__))
     path_to_model = os.path.join(path_to_cur_dir, "yolov8s-seg-co3d.pt")
     results = yolov8_predict(path_to_model, path_to_images, classes, device, save)
-    mask_images(path_to_images, path_to_masks)
     n_masked_frames, n_frames = create_masks(results, path_to_masks)
+    mask_images(path_to_images, path_to_masks)
 
     return n_masked_frames, n_frames, results
